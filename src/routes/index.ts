@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authRoutes } from "../modules/auth/auth.route";
+import { userRoutes } from "../modules/user/user.route";
 
 const router = Router();
 
@@ -8,8 +9,8 @@ const moduleRoutes = [
     path: "/auth",
     route: authRoutes,
   },
-  // পরে এখানে একটা একটা করে add হবে
-  // { path: "/users", route: userRoutes },
+
+  { path: "/users", route: userRoutes },
   // { path: "/categories", route: categoryRoutes },
   // { path: "/ideas", route: ideaRoutes },
   // { path: "/votes", route: voteRoutes },
