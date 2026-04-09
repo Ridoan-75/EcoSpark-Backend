@@ -1,7 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import globalErrorHandler from "./errors/globalErrorHandler";
-import AppError from "./errors/AppError";
+import router from "./routes";
 
 const app: Application = express();
 
@@ -12,13 +12,11 @@ app.use(cors());
 
 // Health check
 app.get("/", (req: Request, res: Response) => {
-  res.json({ success: true, message: "EcoSpark Hub API is running" });
+  res.json({ success: true, message: "EcoSpark Hub API is running 🌿" });
 });
 
-// All routes এখানে পরে add হবে
-
-
-// app.use("/api", router);
+// All routes
+app.use("/api", router);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

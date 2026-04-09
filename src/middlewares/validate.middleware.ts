@@ -1,0 +1,26 @@
+import { NextFunction, Request, Response } from "express";
+import { AnyZodObject, ZodError } from "zod";
+import AppError from "../errors/AppError";
+
+const validateRequest = (schema: AnyZodObject) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      next();
+    } catch (err) {
+      if (err instanceof ZodError) {
+        const errorMessages = err.errors
+          .map((e) => e.message)
+          .join(", ");
+        return next(new AppError(400, errorMessages));
+      }
+      next(err);
+    }
+  };
+};
+
+export default validateRequest;
