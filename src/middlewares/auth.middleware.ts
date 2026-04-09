@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../errors/AppError";
 import { jwtConfig } from "../config/jwt";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 
 // Request এ user type extend করো
 declare global {

@@ -31,6 +31,11 @@ const login = catchAsync(async (req: Request, res: Response) => {
 // ── Get Me ────────────────────────────────────────────
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  
+  if (!userId) {
+    throw new Error("User ID not found");
+  }
+  
   const result = await authService.getMe(userId);
 
   sendResponse(res, {

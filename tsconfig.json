@@ -4,19 +4,19 @@
     "module": "commonjs",
     "ignoreDeprecations": "6.0",
     "moduleResolution": "node",
-    "outDir": "./dist",
     "rootDir": "./src",
+    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "generated/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "generated/prisma"
+    "dist"
   ]
 }

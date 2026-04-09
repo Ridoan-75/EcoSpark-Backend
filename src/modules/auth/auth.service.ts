@@ -1,9 +1,8 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import prisma from "../../lib/prisma";
+import jwt, { SignOptions } from "jsonwebtoken";
+import { prisma } from "../../lib/prisma";
 import AppError from "../../errors/AppError";
 import { jwtConfig } from "../../config/jwt";
-import { Role } from "@prisma/client";
 
 // ── Register ─────────────────────────────────────────
 const register = async (payload: {
@@ -45,7 +44,7 @@ const register = async (payload: {
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     jwtConfig.secret,
-    { expiresIn: jwtConfig.expiresIn as string }
+    { expiresIn: jwtConfig.expiresIn } as SignOptions
   );
 
   return { user, token };
@@ -78,7 +77,7 @@ const login = async (payload: { email: string; password: string }) => {
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     jwtConfig.secret,
-    { expiresIn: jwtConfig.expiresIn as string }
+    { expiresIn: jwtConfig.expiresIn } as SignOptions
   );
 
   const { password: _, ...userWithoutPassword } = user;
