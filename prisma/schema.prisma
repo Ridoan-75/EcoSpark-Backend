@@ -7,10 +7,160 @@ datasource db {
   provider = "postgresql"
 }
 
+// Enums 
+
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+enum IdeaStatus {
+  DRAFT
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum PaymentGateway {
+  STRIPE
+}
+
+// Model
+
 model User {
-    id        String   @id @default(uuid())
-    email     String   @unique
-    name      String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(MEMBER)
+  profileImage String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ideas    Idea[]
+  votes    Vote[]
+  comments Comment[]
+  payments Payment[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  ideas Idea[]
+
+  @@map("categories")
+}
+
+model Idea {
+  id               String     @id @default(uuid())
+  title            String
+  problemStatement String
+  proposedSolution String
+  description      String
+  images           String[]
+  status           IdeaStatus @default(DRAFT)
+  isPaid           Boolean    @default(false)
+  price            Float?
+  rejectionFeedback String?
+  viewCount        Int        @default(0)
+  isDeleted        Boolean    @default(false)
+
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  votes    Vote[]
+  comments Comment[]
+  payments Payment[]
+
+  @@map("ideas")
+}
+
+model Vote {
+  id   String   @id @default(uuid())
+  type VoteType
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  ideaId String
+  idea   Idea   @relation(fields: [ideaId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, ideaId])
+  @@map("votes")
+}
+
+model Comment {
+  id        String  @id @default(uuid())
+  body      String
+  isDeleted Boolean @default(false)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  ideaId String
+  idea   Idea   @relation(fields: [ideaId], references: [id])
+
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+model Payment {
+  id            String         @id @default(uuid())
+  amount        Float
+  status        PaymentStatus  @default(PENDING)
+  gateway       PaymentGateway @default(STRIPE)
+  transactionId String?
+  stripeSessionId String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  ideaId String
+  idea   Idea   @relation(fields: [ideaId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, ideaId])
+  @@map("payments")
+}
+
+model Newsletter {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("newsletters")
 }
