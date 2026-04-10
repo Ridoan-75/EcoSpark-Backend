@@ -5,6 +5,10 @@ import router from "./routes";
 
 const app: Application = express();
 
+app.use("/api/payments/webhook",
+  express.raw({ type: "application/json" })
+)
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

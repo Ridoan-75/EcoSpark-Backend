@@ -5,6 +5,7 @@ import { categoryRoutes } from "../modules/category/category.route";
 import { ideaRoutes } from "../modules/idea/idea.route";
 import { voteRoutes } from "../modules/vote/vote.route";
 import { commentRoutes } from "../modules/comment/comment.route";
+import { paymentRoutes } from "../modules/payment/payment.route";
 
 const router = Router();
 
@@ -38,7 +39,11 @@ const moduleRoutes = [
     path: "/comments",
     route: commentRoutes
   },
-  // { path: "/payments", route: paymentRoutes },
+
+  { 
+    path: "/payments", 
+    route: paymentRoutes
+  },
   // { path: "/newsletter", route: newsletterRoutes },
 ];
 
