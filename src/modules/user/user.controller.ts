@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { userService } from "./user.service";
 import httpStatus from "http-status";
+import { uploadToCloudinary } from "../../utils/imageUpload";
 
 // ── Get All Users (Admin) ─────────────────────────────
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
@@ -76,7 +77,18 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
 
 // ── Update My Profile (Member) ────────────────────────
 const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
-  const result = await userService.updateMyProfile(req.user!.id, req.body);
+  let profileImage: string | undefined;
+
+  // Profile image upload হয়েছে কিনা check করো
+  if (req.file) {
+    const uploaded = await uploadToCloudinary(req.file.buffer, "profiles");
+    profileImage = uploaded.url;
+  }
+
+  const result = await userService.updateMyProfile(req.user!.id, {
+    ...req.body,
+    ...(profileImage && { profileImage }),
+  });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -85,6 +97,7 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 
 // ── Delete My Account (Member) ────────────────────────
 const deleteMyAccount = catchAsync(async (req: Request, res: Response) => {

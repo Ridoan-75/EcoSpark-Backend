@@ -4,6 +4,8 @@ import authMiddleware from "../../middlewares/auth.middleware";
 import roleMiddleware from "../../middlewares/role.middleware";
 import validateRequest from "../../middlewares/validate.middleware";
 import { ideaValidation } from "./idea.validation";
+import paidIdeaMiddleware from "../../middlewares/paidIdea.middleware";
+import { uploadMultiple } from "../../utils/imageUpload";
 
 const router = Router();
 
@@ -23,6 +25,7 @@ router.post(
   "/",
   authMiddleware,
   roleMiddleware("MEMBER"),
+  uploadMultiple,                               // image upload middleware
   validateRequest(ideaValidation.createIdeaSchema),
   ideaController.createIdea
 );
@@ -37,6 +40,7 @@ router.patch(
   "/:id",
   authMiddleware,
   roleMiddleware("MEMBER"),
+  uploadMultiple,                               // image upload middleware
   validateRequest(ideaValidation.updateIdeaSchema),
   ideaController.updateIdea
 );
@@ -85,10 +89,18 @@ router.delete(
   ideaController.deleteIdeaAdmin
 );
 
-// ── Single idea — সবার শেষে রাখো (dynamic route conflict এড়াতে) ──
+// ── Single idea — সবার শেষে রাখো ─────────────────────
+// authMiddleware optional — token থাকলে user পাবো, না থাকলেও চলবে
 router.get(
   "/:id",
-  authMiddleware,
+  (req, res, next) => {
+    // Token থাকলে user attach করো, না থাকলেও next() call করো
+    if (req.headers.authorization) {
+      return authMiddleware(req, res, next);
+    }
+    next();
+  },
+  paidIdeaMiddleware,                           // paid check middleware
   ideaController.getIdeaById
 );
 

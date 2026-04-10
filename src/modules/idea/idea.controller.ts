@@ -3,10 +3,37 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { ideaService } from "./idea.service";
 import httpStatus from "http-status";
+import {
+  uploadMultipleToCloudinary,
+} from "../../utils/imageUpload";
 
 // ── Create Idea (Member) ──────────────────────────────
 const createIdea = catchAsync(async (req: Request, res: Response) => {
-  const result = await ideaService.createIdea(req.user!.id, req.body);
+  let imageUrls: string[] = [];
+
+  // Files upload হয়েছে কিনা check করো
+  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+    imageUrls = await uploadMultipleToCloudinary(
+      req.files as Express.Multer.File[],
+      "ideas"
+    );
+  }
+
+  // body তে images থাকলে (existing URLs) সেগুলোও রাখো
+  const existingImages = req.body.images
+    ? Array.isArray(req.body.images)
+      ? req.body.images
+      : [req.body.images]
+    : [];
+
+  const allImages = [...existingImages, ...imageUrls];
+
+  const result = await ideaService.createIdea(req.user!.id, {
+    ...req.body,
+    isPaid: req.body.isPaid === "true" || req.body.isPaid === true,
+    price: req.body.price ? Number(req.body.price) : null,
+    images: allImages,
+  });
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -55,7 +82,7 @@ const getMyIdeas = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Get All Ideas Admin (Admin) ───────────────────────
+// ── Get All Ideas Admin ───────────────────────────────
 const getAllIdeasAdmin = catchAsync(async (req: Request, res: Response) => {
   const result = await ideaService.getAllIdeasAdmin(req.query);
 
@@ -70,10 +97,41 @@ const getAllIdeasAdmin = catchAsync(async (req: Request, res: Response) => {
 
 // ── Update Idea (Member) ──────────────────────────────
 const updateIdea = catchAsync(async (req: Request, res: Response) => {
+  let imageUrls: string[] = [];
+
+  // নতুন files upload হয়েছে কিনা check করো
+  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+    imageUrls = await uploadMultipleToCloudinary(
+      req.files as Express.Multer.File[],
+      "ideas"
+    );
+  }
+
+  // Existing image URLs body তে থাকলে রাখো
+  const existingImages = req.body.images
+    ? Array.isArray(req.body.images)
+      ? req.body.images
+      : [req.body.images]
+    : [];
+
+  const allImages =
+    existingImages.length > 0 || imageUrls.length > 0
+      ? [...existingImages, ...imageUrls]
+      : undefined;
+
   const result = await ideaService.updateIdea(
     req.params.id as string,
     req.user!.id,
-    req.body
+    {
+      ...req.body,
+      ...(req.body.isPaid !== undefined && {
+        isPaid: req.body.isPaid === "true" || req.body.isPaid === true,
+      }),
+      ...(req.body.price !== undefined && {
+        price: req.body.price ? Number(req.body.price) : null,
+      }),
+      ...(allImages && { images: allImages }),
+    }
   );
 
   sendResponse(res, {
@@ -84,7 +142,7 @@ const updateIdea = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Submit Idea for Review (Member) ───────────────────
+// ── Submit Idea for Review ────────────────────────────
 const submitIdea = catchAsync(async (req: Request, res: Response) => {
   const result = await ideaService.submitIdea(req.params.id as string, req.user!.id);
 
@@ -135,7 +193,7 @@ const deleteIdea = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Delete Idea Admin (Admin) ─────────────────────────
+// ── Delete Idea Admin ─────────────────────────────────
 const deleteIdeaAdmin = catchAsync(async (req: Request, res: Response) => {
   await ideaService.deleteIdeaAdmin(req.params.id as string);
 
@@ -147,7 +205,7 @@ const deleteIdeaAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Get Top Voted Ideas (Public — Homepage) ───────────
+// ── Get Top Voted Ideas ───────────────────────────────
 const getTopVotedIdeas = catchAsync(async (req: Request, res: Response) => {
   const limit = Number(req.query.limit) || 3;
   const result = await ideaService.getTopVotedIdeas(limit);
