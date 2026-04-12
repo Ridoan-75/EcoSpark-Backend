@@ -5,24 +5,40 @@ import router from "./routes";
 
 const app: Application = express();
 
-app.use("/api/payments/webhook",
+// ── Stripe Webhook — সবার আগে raw body ──────────────
+app.use(
+  "/api/payments/webhook",
   express.raw({ type: "application/json" })
-)
+);
 
-// Middlewares
+// ── CORS — এটা সবার আগে রাখো ────────────────────────
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// ── Regular Middlewares ───────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-// Health check
+// ── Health check ──────────────────────────────────────
 app.get("/", (req: Request, res: Response) => {
-  res.json({ success: true, message: "EcoSpark Hub API is running 🌿" });
+  res.json({
+    success: true,
+    message: "EcoSpark Hub API is running 🌿",
+  });
 });
 
-// All routes
+// ── All Routes ────────────────────────────────────────
 app.use("/api", router);
 
-// 404 handler
+// ── 404 Handler ───────────────────────────────────────
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -30,7 +46,7 @@ app.use((req: Request, res: Response) => {
   });
 });
 
-// Global error handler
+// ── Global Error Handler ──────────────────────────────
 app.use(globalErrorHandler);
 
 export default app;
