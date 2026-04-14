@@ -66,13 +66,12 @@ const paidIdeaMiddleware = async (
     });
 
     if (!payment) {
-      throw new AppError(
-        403,
-        "This is a paid idea. Please purchase to view the full content"
-      );
+      // Paid idea কিন্তু payment নেই — flag set করো
+      // Frontend এটা দেখে error handle করবে
+      req.requiresPaidAccess = true;
     }
 
-    // Payment আছে — next() call করো
+    // সবসময় next() call করো — controller ই access level decide করবে
     next();
   } catch (err) {
     next(err);

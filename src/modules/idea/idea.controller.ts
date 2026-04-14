@@ -11,7 +11,7 @@ import {
 const createIdea = catchAsync(async (req: Request, res: Response) => {
   let imageUrls: string[] = [];
 
-  // Files upload হয়েছে কিনা check করো
+  // File upload হয়েছে কিনা check
   if (req.files && Array.isArray(req.files) && req.files.length > 0) {
     imageUrls = await uploadMultipleToCloudinary(
       req.files as Express.Multer.File[],
@@ -20,16 +20,21 @@ const createIdea = catchAsync(async (req: Request, res: Response) => {
   }
 
   // body তে images থাকলে (existing URLs) সেগুলোও রাখো
-  const existingImages = req.body.images
-    ? Array.isArray(req.body.images)
-      ? req.body.images
-      : [req.body.images]
+  const bodyImages = req.body.images;
+  const existingImages = bodyImages
+    ? Array.isArray(bodyImages)
+      ? bodyImages
+      : [bodyImages]
     : [];
 
   const allImages = [...existingImages, ...imageUrls];
 
   const result = await ideaService.createIdea(req.user!.id, {
-    ...req.body,
+    title: req.body.title,
+    problemStatement: req.body.problemStatement,
+    proposedSolution: req.body.proposedSolution,
+    description: req.body.description,
+    categoryId: req.body.categoryId,
     isPaid: req.body.isPaid === "true" || req.body.isPaid === true,
     price: req.body.price ? Number(req.body.price) : null,
     images: allImages,
@@ -61,11 +66,20 @@ const getIdeaById = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const result = await ideaService.getIdeaById(req.params.id as string, userId);
 
+  // Paid idea কিন্তু payment করেনি — proposedSolution hide করো
+  const finalResult = req.requiresPaidAccess 
+    ? {
+        ...result,
+        proposedSolution: "[This is a paid idea - Purchase to view solution]",
+        isPaidAndNotPurchased: true,
+      }
+    : result;
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Idea fetched successfully",
-    data: result,
+    data: finalResult,
   });
 });
 

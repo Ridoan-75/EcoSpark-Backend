@@ -177,6 +177,21 @@ const verifyPayment = async (sessionId: string, userId: string) => {
     throw new AppError(404, "Payment session not found");
   }
 
+  // Stripe session থেকে payment status check করো
+  if (session.payment_status === "paid") {
+    // Database এ payment update করো — PENDING → SUCCESS
+    await prisma.payment.updateMany({
+      where: {
+        stripeSessionId: sessionId,
+        userId,
+      },
+      data: {
+        status: PaymentStatus.SUCCESS,
+        transactionId: session.payment_intent as string,
+      },
+    });
+  }
+
   const payment = await prisma.payment.findFirst({
     where: {
       stripeSessionId: sessionId,

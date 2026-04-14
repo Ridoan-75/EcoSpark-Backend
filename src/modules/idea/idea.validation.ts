@@ -4,49 +4,62 @@ const createIdeaSchema = z.object({
   body: z.object({
     title: z
       .string()
-      .nonempty("Title is required")
       .min(5, "Title must be at least 5 characters")
       .max(150, "Title must be at most 150 characters")
       .trim(),
 
     problemStatement: z
       .string()
-      .nonempty("Problem statement is required")
       .min(20, "Problem statement must be at least 20 characters")
       .trim(),
 
     proposedSolution: z
       .string()
-      .nonempty("Proposed solution is required")
       .min(20, "Proposed solution must be at least 20 characters")
       .trim(),
 
     description: z
       .string()
-      .nonempty("Description is required")
       .min(50, "Description must be at least 50 characters")
       .trim(),
 
     categoryId: z
       .string()
-      .nonempty("Category is required")
       .uuid("Invalid category ID"),
 
-    isPaid: z.boolean().default(false),
+    // ── FormData থেকে আসলে string হয় — coerce করতে হবে ──
+    isPaid: z
+      .union([z.boolean(), z.string()])
+      .transform((val) => {
+        if (typeof val === "string") return val === "true";
+        return val;
+      })
+      .default(false),
 
     price: z
-      .number()
-      .min(1, "Price must be at least 1")
+      .union([z.number(), z.string(), z.null(), z.undefined()])
+      .transform((val) => {
+        if (val === null || val === undefined || val === "") return null;
+        const num = Number(val);
+        return isNaN(num) ? null : num;
+      })
       .optional()
       .nullable(),
 
+    // ── images array — FormData থেকে string বা array আসতে পারে ──
     images: z
-      .array(z.string().url("Invalid image URL"))
-      .min(1, "At least one image is required")
-      .max(5, "Maximum 5 images allowed"),
+      .union([
+        z.array(z.string()),
+        z.string(),
+      ])
+      .transform((val) => {
+        if (typeof val === "string") return [val];
+        return val;
+      })
+      .optional()
+      .default([]),
   }).refine(
     (data) => {
-      // isPaid true হলে price অবশ্যই দিতে হবে
       if (data.isPaid && (!data.price || data.price <= 0)) {
         return false;
       }
@@ -91,18 +104,33 @@ const updateIdeaSchema = z.object({
       .uuid("Invalid category ID")
       .optional(),
 
-    isPaid: z.boolean().optional(),
+    isPaid: z
+      .union([z.boolean(), z.string()])
+      .transform((val) => {
+        if (typeof val === "string") return val === "true";
+        return val;
+      })
+      .optional(),
 
     price: z
-      .number()
-      .min(1, "Price must be at least 1")
+      .union([z.number(), z.string(), z.null(), z.undefined()])
+      .transform((val) => {
+        if (val === null || val === undefined || val === "") return null;
+        const num = Number(val);
+        return isNaN(num) ? null : num;
+      })
       .optional()
       .nullable(),
 
     images: z
-      .array(z.string().url("Invalid image URL"))
-      .min(1, "At least one image is required")
-      .max(5, "Maximum 5 images allowed")
+      .union([
+        z.array(z.string()),
+        z.string(),
+      ])
+      .transform((val) => {
+        if (typeof val === "string") return [val];
+        return val;
+      })
       .optional(),
   }).refine(
     (data) => {
@@ -122,7 +150,6 @@ const rejectIdeaSchema = z.object({
   body: z.object({
     rejectionFeedback: z
       .string()
-      .nonempty("Rejection feedback is required")
       .min(10, "Feedback must be at least 10 characters")
       .trim(),
   }),

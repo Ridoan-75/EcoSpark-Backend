@@ -18,7 +18,6 @@ const createIdea = async (
     images: string[];
   }
 ) => {
-  // Category exists কিনা check করো
   const category = await prisma.category.findUnique({
     where: { id: payload.categoryId },
   });
@@ -27,10 +26,11 @@ const createIdea = async (
     throw new AppError(404, "Category not found");
   }
 
-  // isPaid false হলে price null করো
   const ideaData = {
     ...payload,
     price: payload.isPaid ? payload.price : null,
+    // images array empty হলে [] দাও
+    images: payload.images ?? [],
     authorId: userId,
     status: IdeaStatus.DRAFT,
   };
@@ -58,7 +58,6 @@ const createIdea = async (
 
   return idea;
 };
-
 // ── Get All Approved Ideas (Public) ───────────────────
 const getAllIdeas = async (query: Record<string, unknown>) => {
   const { page, limit, searchTerm, categoryId, isPaid, sortBy } = query;
@@ -145,6 +144,7 @@ const getAllIdeas = async (query: Record<string, unknown>) => {
   };
 };
 
+
 // ── Get Single Idea (Public — paid check আলাদা middleware এ) ──
 const getIdeaById = async (id: string, userId?: string) => {
   const idea = await prisma.idea.findUnique({
@@ -179,9 +179,10 @@ const getIdeaById = async (id: string, userId?: string) => {
     throw new AppError(404, "Idea not found");
   }
 
-  // Approved না হলে শুধু author বা admin দেখতে পারবে
+  // Only approved ideas are publicly visible
+  // Author can view their own unpublished ideas
   if (idea.status !== IdeaStatus.APPROVED) {
-    if (!userId || (userId !== idea.authorId)) {
+    if (!userId || userId !== idea.authorId) {
       throw new AppError(403, "This idea is not publicly available");
     }
   }
@@ -199,7 +200,6 @@ const getIdeaById = async (id: string, userId?: string) => {
     ? idea.votes.find((v) => v.userId === userId)
     : null;
 
-  // Paid idea তে price hide করা দরকার না — payment check middleware করবে
   return {
     ...idea,
     userVote: userVote ? userVote.type : null,
@@ -568,6 +568,8 @@ const deleteIdeaAdmin = async (ideaId: string) => {
 
   return null;
 };
+
+
 
 // ── Get Top Voted Ideas (Public — Homepage) ───────────
 const getTopVotedIdeas = async (limit: number = 3) => {
