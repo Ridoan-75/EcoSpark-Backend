@@ -15,7 +15,7 @@ app.use(
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
+      "https://ecospark-frontend-gules.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
