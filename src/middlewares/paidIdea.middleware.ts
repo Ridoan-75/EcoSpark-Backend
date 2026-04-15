@@ -10,8 +10,6 @@ const paidIdeaMiddleware = async (
 ) => {
   try {
     const ideaId = req.params.id as string;
-
-    // Idea খুঁজে বের করো
     const idea = await prisma.idea.findUnique({
       where: { id: ideaId, isDeleted: false },
       select: {
