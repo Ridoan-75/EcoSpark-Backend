@@ -1,3 +1,4 @@
+// Routes for category-related endpoints.
 import { Router } from "express";
 import { categoryController } from "./category.controller";
 import authMiddleware from "../../middlewares/auth.middleware";
@@ -7,7 +8,7 @@ import { categoryValidation } from "./category.validation";
 
 const router = Router();
 
-// ── Public routes ─────────────────────────────────────
+// Public routes
 router.get(
   "/",
   categoryController.getAllCategories

@@ -1,3 +1,4 @@
+// Middleware to check if an idea requires payment and handle access control.
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import AppError from "../errors/AppError";

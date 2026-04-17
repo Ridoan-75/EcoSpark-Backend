@@ -1,3 +1,4 @@
+// Controller for idea management endpoints.
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
@@ -7,11 +8,11 @@ import {
   uploadMultipleToCloudinary,
 } from "../../utils/imageUpload";
 
-// ── Create Idea (Member) ──────────────────────────────
+// Create Idea (Member)
 const createIdea = catchAsync(async (req: Request, res: Response) => {
   let imageUrls: string[] = [];
 
-  // File upload হয়েছে কিনা check
+  // Check if files were uploaded
   if (req.files && Array.isArray(req.files) && req.files.length > 0) {
     imageUrls = await uploadMultipleToCloudinary(
       req.files as Express.Multer.File[],

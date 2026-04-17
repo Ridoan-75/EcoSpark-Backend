@@ -1,3 +1,4 @@
+// Global error handler middleware to catch and respond to errors uniformly.
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import AppError from "./AppError";
 

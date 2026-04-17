@@ -1,3 +1,4 @@
+// Main router that combines all module routes into a single router.
 import { Router } from "express";
 import { authRoutes } from "../modules/auth/auth.route";
 import { userRoutes } from "../modules/user/user.route";
@@ -16,8 +17,8 @@ const moduleRoutes = [
     route: authRoutes,
   },
 
-  { 
-    path: "/users", 
+  {
+    path: "/users",
     route: userRoutes
  },
 

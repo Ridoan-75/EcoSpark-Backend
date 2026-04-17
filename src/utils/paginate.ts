@@ -1,3 +1,4 @@
+// Utility function for pagination calculations.
 type TPaginateOptions = {
   page?: string | number;
   limit?: string | number;

@@ -1,3 +1,4 @@
+// Validation middleware using Zod to validate request data.
 import { NextFunction, Request, Response } from "express";
 import { ZodSchema, ZodError } from "zod";
 import AppError from "../errors/AppError";

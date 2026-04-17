@@ -1,3 +1,4 @@
+// Cloudinary configuration for handling image uploads and storage.
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({

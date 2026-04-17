@@ -1,3 +1,4 @@
+// Validation schemas for comment requests using Zod.
 import { z } from "zod";
 
 const createCommentSchema = z.object({

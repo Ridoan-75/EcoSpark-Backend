@@ -1,3 +1,4 @@
+// Server startup file that initializes and starts the Express application.
 import app from './app';
 import config from './config';
 

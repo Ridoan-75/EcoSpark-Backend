@@ -1,16 +1,17 @@
+// Service layer for authentication logic including register and login.
 import bcrypt from "bcryptjs";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../errors/AppError";
 import { jwtConfig } from "../../config/jwt";
 
-// ── Register ─────────────────────────────────────────
+// Register
 const register = async (payload: {
   name: string;
   email: string;
   password: string;
 }) => {
-  // Email already exists কিনা check করো
+  // Check if email already exists
   const existingUser = await prisma.user.findUnique({
     where: { email: payload.email },
   });

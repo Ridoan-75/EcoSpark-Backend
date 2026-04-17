@@ -1,3 +1,4 @@
+// Authentication middleware to verify JWT tokens and attach user info to request.
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../errors/AppError";

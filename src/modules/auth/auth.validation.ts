@@ -1,3 +1,4 @@
+// Validation schemas for authentication requests using Zod.
 import { z } from "zod";
 
 const registerSchema = z.object({

@@ -1,3 +1,4 @@
+// Routes for comment-related endpoints.
 import { Router } from "express";
 import { commentController } from "./comment.controller";
 import authMiddleware from "../../middlewares/auth.middleware";
@@ -7,7 +8,7 @@ import { commentValidation } from "./comment.validation";
 
 const router = Router();
 
-// ── Public routes ─────────────────────────────────────
+// Public routes
 
 // Get all comments for an idea — paginated + nested replies
 router.get(
@@ -15,7 +16,7 @@ router.get(
   commentController.getCommentsByIdeaId
 );
 
-// ── Member routes ─────────────────────────────────────
+// Member routes
 
 // Create comment or reply
 // parentId থাকলে reply, না থাকলে top-level comment

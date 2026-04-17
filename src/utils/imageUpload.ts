@@ -1,11 +1,11 @@
+// Utility for handling image uploads using Multer and Cloudinary.
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { Request } from "express";
 import AppError from "../errors/AppError";
 import "../config/cloudinary";
 
-// ── Multer — memory storage use করবো
-// disk storage না করে directly cloudinary তে upload হবে
+// Multer configuration using memory storage for direct upload to Cloudinary
 const storage = multer.memoryStorage();
 
 const fileFilter = (
@@ -45,7 +45,7 @@ export const uploadMultiple = multer({
   },
 }).array("images", 5);
 
-// ── Buffer থেকে Cloudinary তে upload করো ─────────────
+// Function to upload buffer to Cloudinary
 export const uploadToCloudinary = (
   buffer: Buffer,
   folder: string

@@ -1,3 +1,4 @@
+// Configuration file that loads environment variables and exports app settings.
 import dotenv from 'dotenv';
 import path from 'path';
 

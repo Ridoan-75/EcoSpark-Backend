@@ -1,3 +1,4 @@
+// Routes for authentication endpoints.
 import { Router } from "express";
 import { authController } from "./auth.controller";
 import validateRequest from "../../middlewares/validate.middleware";

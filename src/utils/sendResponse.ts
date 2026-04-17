@@ -1,3 +1,4 @@
+// Utility function to send standardized API responses.
 import { Response } from "express";
 
 type TMeta = {

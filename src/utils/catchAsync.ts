@@ -1,3 +1,4 @@
+// Utility function to catch asynchronous errors in route handlers.
 import { NextFunction, Request, Response } from "express";
 
 const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {

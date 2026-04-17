@@ -1,10 +1,11 @@
+// Controller for comment management endpoints.
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { commentService } from "./comment.service";
 import httpStatus from "http-status";
 
-// ── Create Comment or Reply ───────────────────────────
+// Create Comment or Reply
 const createComment = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.createComment(req.user!.id, req.body);
 

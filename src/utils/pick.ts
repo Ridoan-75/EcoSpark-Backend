@@ -1,3 +1,4 @@
+// Utility function to pick specific properties from an object.
 const pick = <T extends object, K extends keyof T>(
   obj: T,
   keys: K[]

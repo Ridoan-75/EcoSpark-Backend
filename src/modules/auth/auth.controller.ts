@@ -1,10 +1,11 @@
+// Controller for authentication-related endpoints like register and login.
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { authService } from "./auth.service";
 import httpStatus from "http-status";
 
-// ── Register ─────────────────────────────────────────
+// Register
 const register = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.register(req.body);
 
@@ -16,7 +17,7 @@ const register = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Login ─────────────────────────────────────────────
+// Login
 const login = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.login(req.body);
 

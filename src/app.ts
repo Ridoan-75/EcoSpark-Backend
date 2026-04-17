@@ -1,3 +1,4 @@
+// Main application setup and configuration
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import globalErrorHandler from "./errors/globalErrorHandler";
@@ -5,13 +6,13 @@ import router from "./routes";
 
 const app: Application = express();
 
-// ── Stripe Webhook — সবার আগে raw body ──────────────
+// Stripe Webhook - Handle raw body before other middlewares
 app.use(
   "/api/payments/webhook",
   express.raw({ type: "application/json" })
 );
 
-// ── CORS — এটা সবার আগে রাখো ────────────────────────
+// CORS Configuration - Allow cross-origin requests from specified origins
 app.use(
   cors({
     origin: [
@@ -24,11 +25,11 @@ app.use(
   })
 );
 
-// ── Regular Middlewares ───────────────────────────────
+// Regular Middlewares - Parse JSON and URL-encoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ── Health check ──────────────────────────────────────
+// Health Check Route - Basic endpoint to verify API is running
 app.get("/", (req: Request, res: Response) => {
   res.json({
     success: true,
@@ -36,10 +37,10 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// ── All Routes ────────────────────────────────────────
+// All Routes - Mount the main API router
 app.use("/api", router);
 
-// ── 404 Handler ───────────────────────────────────────
+// 404 Handler - Handle requests to non-existent routes
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -47,7 +48,7 @@ app.use((req: Request, res: Response) => {
   });
 });
 
-// ── Global Error Handler ──────────────────────────────
+// Global Error Handler - Catch and handle all errors
 app.use(globalErrorHandler);
 
 export default app;

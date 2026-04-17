@@ -1,3 +1,4 @@
+// Controller for user management endpoints.
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
@@ -5,7 +6,7 @@ import { userService } from "./user.service";
 import httpStatus from "http-status";
 import { uploadToCloudinary } from "../../utils/imageUpload";
 
-// ── Get All Users (Admin) ─────────────────────────────
+// Get All Users (Admin)
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await userService.getAllUsers(req.query);
 

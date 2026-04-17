@@ -1,10 +1,11 @@
+// Controller for category management endpoints.
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { categoryService } from "./category.service";
 import httpStatus from "http-status";
 
-// ── Create Category (Admin) ───────────────────────────
+// Create Category (Admin)
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const result = await categoryService.createCategory(req.body);
 
@@ -16,7 +17,7 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// ── Get All Categories (Public) ───────────────────────
+// Get All Categories (Public)
 const getAllCategories = catchAsync(async (req: Request, res: Response) => {
   const result = await categoryService.getAllCategories(req.query);
 

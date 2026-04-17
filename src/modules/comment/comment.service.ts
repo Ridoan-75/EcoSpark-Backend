@@ -1,9 +1,10 @@
+// Service layer for comment business logic.
 import {prisma} from "../../lib/prisma";
 import AppError from "../../errors/AppError";
 import { IdeaStatus } from "../../../generated/prisma/client";
 import paginate from "../../utils/paginate";
 
-// ── Create Comment or Reply ───────────────────────────
+// Create Comment or Reply
 const createComment = async (
   userId: string,
   payload: {
@@ -14,7 +15,7 @@ const createComment = async (
 ) => {
   const { body, ideaId, parentId } = payload;
 
-  // Idea exists এবং approved কিনা check করো
+  // Check if idea exists and is approved
   const idea = await prisma.idea.findUnique({
     where: { id: ideaId, isDeleted: false },
     select: { id: true, status: true, isPaid: true },

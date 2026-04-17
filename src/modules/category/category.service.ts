@@ -1,10 +1,11 @@
+// Service layer for category business logic.
 import {prisma} from "../../lib/prisma";
 import AppError from "../../errors/AppError";
 import paginate from "../../utils/paginate";
 
-// ── Create Category (Admin) ───────────────────────────
+// Create Category (Admin)
 const createCategory = async (payload: { name: string }) => {
-  // Duplicate check করো
+  // Check for duplicate
   const existing = await prisma.category.findUnique({
     where: { name: payload.name },
   });

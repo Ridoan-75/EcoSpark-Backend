@@ -1,3 +1,4 @@
+// Role-based access control middleware to restrict access based on user roles.
 import { NextFunction, Request, Response } from "express";
 import AppError from "../errors/AppError";
 

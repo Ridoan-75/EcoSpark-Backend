@@ -1,3 +1,4 @@
+// Validation schemas for category requests using Zod.
 import { z } from "zod";
 
 const createCategorySchema = z.object({
