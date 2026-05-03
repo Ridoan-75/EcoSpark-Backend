@@ -8,6 +8,7 @@ import { voteRoutes } from "../modules/vote/vote.route";
 import { commentRoutes } from "../modules/comment/comment.route";
 import { paymentRoutes } from "../modules/payment/payment.route";
 import { newsletterRoutes } from "../modules/newsletter/newsletter.route";
+import aiRouter from "../modules/ai/ai.route";
 
 const router = Router();
 
@@ -19,37 +20,42 @@ const moduleRoutes = [
 
   {
     path: "/users",
-    route: userRoutes
- },
-
-  { 
-    path: "/categories", 
-    route: categoryRoutes 
-  },
-  
-  { 
-    path: "/ideas", 
-    route: ideaRoutes
+    route: userRoutes,
   },
 
-  { 
+  {
+    path: "/categories",
+    route: categoryRoutes,
+  },
+
+  {
+    path: "/ideas",
+    route: ideaRoutes,
+  },
+
+  {
     path: "/votes",
-     route: voteRoutes 
+    route: voteRoutes,
   },
 
-  { 
+  {
     path: "/comments",
-    route: commentRoutes
+    route: commentRoutes,
   },
 
-  { 
-    path: "/payments", 
-    route: paymentRoutes
+  {
+    path: "/payments",
+    route: paymentRoutes,
   },
 
-  { 
-    path: "/newsletter", 
-    route: newsletterRoutes 
+  {
+    path: "/newsletter",
+    route: newsletterRoutes,
+  },
+
+  {
+    path: "/ai",
+    route: aiRouter,
   },
 ];
 
