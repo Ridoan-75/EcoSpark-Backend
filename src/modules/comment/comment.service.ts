@@ -18,7 +18,7 @@ const createComment = async (
   // Check if idea exists and is approved
   const idea = await prisma.idea.findUnique({
     where: { id: ideaId, isDeleted: false },
-    select: { id: true, status: true, isPaid: true },
+    select: { id: true, status: true, isPaid: true, authorId: true },
   });
 
   if (!idea) {
@@ -30,7 +30,10 @@ const createComment = async (
   }
 
   // Paid idea তে comment করতে payment থাকতে হবে
-  if (idea.isPaid) {
+  // কিন্তু idea র author এবং admin সবসময় comment করতে পারবে
+  const isAuthor = idea.authorId === userId;
+
+  if (idea.isPaid && !isAuthor) {
     const payment = await prisma.payment.findFirst({
       where: {
         ideaId,
