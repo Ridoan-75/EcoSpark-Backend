@@ -47,8 +47,21 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Google Login
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.googleLogin(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Google login successful",
+    data: result,
+  });
+});
+
 export const authController = {
   register,
   login,
   getMe,
+  googleLogin,
 };

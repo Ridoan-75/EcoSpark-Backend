@@ -25,4 +25,9 @@ router.get(
   authController.getMe
 );
 
+router.post(
+  "/google",
+  authController.googleLogin
+);
+
 export const authRoutes = router;

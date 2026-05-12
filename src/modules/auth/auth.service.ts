@@ -115,8 +115,44 @@ const getMe = async (userId: string) => {
   return user;
 };
 
+// ── Google Login ──────────────────────────────────────
+const googleLogin = async (payload: { name: string; email: string; picture?: string }) => {
+  const { name, email, picture } = payload;
+
+  if (!email) {
+    throw new AppError(400, "Google sign-in failed: missing email");
+  }
+
+  let user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: "",
+        profileImage: picture ?? null,
+      },
+    });
+  }
+
+  if (!user.isActive) {
+    throw new AppError(403, "Your account has been deactivated. Contact support.");
+  }
+
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    jwtConfig.secret,
+    { expiresIn: jwtConfig.expiresIn } as SignOptions
+  );
+
+  const { password: _, ...userWithoutPassword } = user;
+  return { user: userWithoutPassword, token };
+};
+
 export const authService = {
   register,
   login,
   getMe,
+  googleLogin,
 };
